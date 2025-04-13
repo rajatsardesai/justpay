@@ -44,6 +44,20 @@ export const useBlockExecutor = (
                     });
                     await delay(300);
                 }
+            } else if (block.category === "looks" && (block.action === "say" || block.action === "think")) {
+                const message = block.text ?? "";
+                setMessage(message);
+                await delay(2000);
+                setMessage("");
+            }
+            else if (block.category === "control" && block.action === "repeat") {
+                const repeatCount = block.times ?? 1;
+
+                if (block.blocks && Array.isArray(block.blocks)) {
+                    for (let i = 0; i < repeatCount; i++) {
+                        await executeBlocksRecursive(block.blocks, rotation);
+                    }
+                }
             }
         }
     };

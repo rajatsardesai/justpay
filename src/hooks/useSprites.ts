@@ -4,11 +4,13 @@ export type SpriteType = {
     type: string;
     x: number;
     y: number;
+    width: number;
+    height: number;
 };
 
 export const useSprites = () => {
     const [sprites, setSprites] = useState<SpriteType[]>([
-        { type: "cat", x: 100, y: 100 },
+        { type: "cat", x: 100, y: 100, width:0, height:0 },
     ]);
 
     const draggingIndex = useRef<number | null>(null);
@@ -17,7 +19,7 @@ export const useSprites = () => {
     const handleMouseDown = (
         e: React.MouseEvent,
         index: number,
-        previewRef: React.RefObject<HTMLDivElement>
+        previewRef: HTMLDivElement | null
     ) => {
         draggingIndex.current = index;
         const sprite = sprites[index];
@@ -29,7 +31,7 @@ export const useSprites = () => {
         const handleMouseMove = (e: MouseEvent) => {
             if (draggingIndex.current === null) return;
             const idx = draggingIndex.current;
-            const bounds = previewRef.current?.getBoundingClientRect();
+            const bounds = previewRef?.getBoundingClientRect();
 
             let newX = e.clientX - offset.current.x;
             let newY = e.clientY - offset.current.y;
@@ -57,7 +59,7 @@ export const useSprites = () => {
     };
 
     const addSprite = () => {
-        setSprites((prev) => [...prev, { type: "ball", x: 50, y: 50 }]);
+        setSprites((prev) => [...prev, { type: "ball", x: 50, y: 50,width:0, height:0 }]);
     };
 
     const updateSprite = (index: number, update: Partial<SpriteType>) => {

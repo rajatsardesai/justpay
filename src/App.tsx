@@ -63,7 +63,8 @@ const App: React.FC = () => {
                         rotation={rotation}
                         message={message}
                         onSpriteClick={handleSpriteClick}
-                        onMouseDown={(e, idx) => handleMouseDown(e, idx, previewRef)}
+                        onMouseDown={(e: React.MouseEvent<HTMLDivElement>,
+                                      idx: number) => handleMouseDown(e, idx, previewRef.current)}
                         previewRef={previewRef}
                         addSprite={addSprite}
                     />

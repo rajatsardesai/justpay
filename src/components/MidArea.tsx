@@ -79,7 +79,7 @@ const MidArea: React.FC<Props> = ({ setEventBlock, setMidAreaBlocks, runAllBlock
                             className="ml-4 mt-2 p-2 min-h-[80px] bg-white border-2 border-dashed border-orange-400 rounded"
                         >
                             {eventBlock.blocks?.length ? (
-                                eventBlock.blocks.map((b, idx) => (
+                                eventBlock.blocks.map((b: BlockType, idx: number) => (
                                     <Block key={idx} block={b} onDragStart={() => {}} />
                                 ))
                             ) : (

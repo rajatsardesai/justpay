@@ -1,11 +1,11 @@
 export type MotionBlock =
-    | { category: "motion"; action: "move"; label: string; value: number }
-    | { category: "motion"; action: "turn"; label: string; value: number }
-    | { category: "motion"; action: "goto"; label: string; x: number; y: number };
+    | { category: "motion"; action: "move"; label: string; value: number; blocks?: BlockType[] }
+    | { category: "motion"; action: "turn"; label: string; value: number; blocks?: BlockType[] }
+    | { category: "motion"; action: "goto"; label: string; x: number; y: number; blocks?: BlockType[] };
 
 export type LooksBlock =
-    | { category: "looks"; action: "say"; label: string; text: string; duration: number }
-    | { category: "looks"; action: "think"; label: string; text: string; duration: number };
+    | { category: "looks"; action: "say"; label: string; text: string; duration: number; blocks?: BlockType[] }
+    | { category: "looks"; action: "think"; label: string; text: string; duration: number; blocks?: BlockType[] };
 
 export type ControlBlock = {
     category: "control";

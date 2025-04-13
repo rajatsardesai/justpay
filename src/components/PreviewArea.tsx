@@ -1,16 +1,32 @@
-import React, { useEffect } from 'react';
 import CatSprite from './CatSprite';
 import BallSprite from './BallSprite';
 
-const PreviewArea = ({
-                         sprites,
-                         rotation,
-                         message,
-                         onSpriteClick,
-                         onMouseDown,
-                         previewRef,
-                         addSprite,
-                     }) => {
+type SpriteType = {
+    type: string;
+    x: number;
+    y: number;
+};
+
+type PreviewAreaProps = {
+    sprites: SpriteType[];
+    rotation: number;
+    message: string;
+    onSpriteClick: () => void;
+    onMouseDown: (e: React.MouseEvent<HTMLDivElement>, index: number) => void;
+    previewRef: React.RefObject<HTMLDivElement | null>;
+    addSprite: () => void;
+};
+
+
+const PreviewArea: React.FC<PreviewAreaProps> = ({
+                                                     sprites,
+                                                     rotation,
+                                                     message,
+                                                     onSpriteClick,
+                                                     onMouseDown,
+                                                     previewRef,
+                                                     addSprite,
+                                                 })  => {
     const getSpriteComponent = (type: string) => {
         if (type === 'cat') return <CatSprite />;
         if (type === 'ball') return <BallSprite />;
