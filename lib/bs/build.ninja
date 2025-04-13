@@ -1,0 +1,8 @@
+rescript = 1
+g_finger := /Users/rajatsardesai/Documents/workspace/company interviews/justpay/justpay/node_modules/@rescript/react/lib/ocaml/install.stamp
+g_finger := /Users/rajatsardesai/Documents/workspace/company interviews/justpay/justpay/node_modules/rescript-webapi/lib/ocaml/install.stamp
+g_finger := /Users/rajatsardesai/Documents/workspace/company interviews/justpay/justpay/node_modules/bs-fetch/lib/ocaml/install.stamp
+rule build_package
+  command = '/Users/rajatsardesai/Documents/workspace/company interviews/justpay/justpay/node_modules/rescript/darwinarm64/bsc.exe' -w -49 -color always -no-alias-deps  $i
+  restat = 1
+o EditorUi.cmi : build_package EditorUi.mlmap
