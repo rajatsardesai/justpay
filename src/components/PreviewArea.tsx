@@ -66,11 +66,6 @@ const SpriteComponent = memo(({
                 {message}
             </div>
         )}
-        {sprite.currentAnimation && (
-            <div className="absolute top-0 left-0 w-full h-full">
-                {/* Animation overlay */}
-            </div>
-        )}
     </div>
 ));
 

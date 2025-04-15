@@ -28,8 +28,8 @@ export const useSprites = () => {
     const [sprites, setSprites] = useState<SpriteType[]>([
         {
             type: "cat",
-            x: 200,
-            y: 200,
+            x: 100,
+            y: 100,
             width: 95,
             height: 100,
             motionInstructions: [],
@@ -143,8 +143,8 @@ export const useSprites = () => {
             ...prev,
             {
                 type: "ball",
-                x: 400,
-                y: 200,
+                x: 300,
+                y: 100,
                 width: 50,
                 height: 50,
                 motionInstructions: [],

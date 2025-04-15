@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 const checkCollision = (sprite1: SpriteType, sprite2: SpriteType): boolean => {
     const dx = sprite1.x - sprite2.x;
     const dy = sprite1.y - sprite2.y;
-    const bufferZone = 0.2;
+    const bufferZone = 0.5;
     const minDistance = (sprite1.width + sprite2.width) * (0.5 + bufferZone);
     const minHeight = (sprite1.height + sprite2.height) * (0.5 + bufferZone);
     
