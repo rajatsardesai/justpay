@@ -15,6 +15,7 @@
     "bs-fetch": "^0.6.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-toastify": "^11.0.5",
     "rescript": "^11.1.4",
     "rescript-webapi": "^0.10.0",
     "tailwindcss": "^4.1.3"

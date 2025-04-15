@@ -1,6 +1,7 @@
 import { BlockType } from "../components/Block";
 import {Dispatch, SetStateAction, useEffect, useRef} from "react";
 import { SpriteType } from "./useSprites";
+import { toast } from "react-toastify";
 
 const checkCollision = (sprite1: SpriteType, sprite2: SpriteType): boolean => {
     const dx = sprite1.x - sprite2.x;
@@ -109,6 +110,9 @@ export const useBlockExecutor = (
                     setActiveAction(prev => {
                         const action1 = prev[0];
                         const action2 = prev[1];
+                        
+                        toast.info(`Actions swapped! Sprite 1 now has ${action2} and Sprite 2 now has ${action1}`);
+                        
                         return {
                             ...prev,
                             0: action2,
