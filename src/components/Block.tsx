@@ -46,7 +46,7 @@ const NumberInput = memo(({
         value={value}
         onChange={(e) => onChange(+e.target.value)}
         className={`mx-1 min-w-[${minWidth}] appearance-none bg-white text-black border border-gray-300 rounded px-1 text-sm transition-all duration-100 focus:outline-none focus:ring-2 focus:ring-blue-300`}
-        style={{ width: `${value.toString().length + 2}ch` }}
+        style={{ width: `${value.toString().length + 4}ch` }}
     />
 ));
 
