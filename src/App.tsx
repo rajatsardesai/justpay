@@ -8,10 +8,8 @@ import { useSprites } from './hooks/useSprites';
 import { useBlockExecutor } from './hooks/useBlockExecutor';
 
 const App: React.FC = () => {
-    const [rotation, setRotation] = useState(0);
     const [message, setMessage] = useState('');
     const [eventBlock, setEventBlock] = useState<BlockType | null>(null);
-    const [blocks, setBlocks] = useState<BlockType[]>([]);
     const [spriteBlocks, setSpriteBlocks] = useState<Record<number, Record<'action1' | 'action2', BlockType[]>>>({});
     const [activeAction, setActiveAction] = useState<Record<number, 'action1' | 'action2'>>({});
     const [activeTab, setActiveTab] = useState(0);
@@ -41,7 +39,7 @@ const App: React.FC = () => {
 
     const runMidAreaBlocks = async () => {
         if (eventBlock && eventBlock.blocks) {
-            await executeBlocksRecursive(eventBlock.blocks, rotation);
+            await executeBlocksRecursive(eventBlock.blocks, 0);
         }
         
         for (let i = 0; i < sprites.length; i++) {
