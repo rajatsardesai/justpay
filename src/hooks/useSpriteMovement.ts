@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 import { SpriteType } from "./useSprites";
 
 export const useSpriteMovement = (
-    sprites: SpriteType[],
     setSprites: Dispatch<SetStateAction<SpriteType[]>>
 ) => {
     const updateSpritePosition = async (spriteIndex: number, distance: number, angle: number, x?: number, y?: number) => {

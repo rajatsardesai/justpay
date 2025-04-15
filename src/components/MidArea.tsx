@@ -149,9 +149,6 @@ const MidArea: React.FC<Props> = ({
 
                 {sprites.length > 0 && (
                     <div className="p-2 mb-4 rounded bg-blue-100 shadow">
-                        <h3 className="font-bold mb-2">
-                            {sprites[activeTab].type === 'cat' ? 'Cat' : 'Ball'} - {activeAction[activeTab]}
-                        </h3>
                         <div className="flex space-x-2 mb-2">
                             <button
                                 className={`px-4 py-2 rounded ${

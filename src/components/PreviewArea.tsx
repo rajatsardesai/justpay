@@ -5,14 +5,15 @@ import { SpriteType } from '../hooks/useSprites';
 
 type PreviewAreaProps = {
     sprites: SpriteType[];
+    isPlaying: boolean;
     onSpriteClick: (index: number) => void;
-    onMouseDown: (e: React.MouseEvent<HTMLDivElement>, index: number) => void;
     addSprite: () => void;
     activeTab: number;
     setActiveTab: (index: number) => void;
     activeAction: Record<number, 'action1' | 'action2'>;
-    message: string;
-    runAllBlocks: () => void;
+    message: string | null;
+    runAllBlocks: () => Promise<void>;
+    togglePlay: () => void;
 };
 
 const SpriteThumbnail = memo(({ 
@@ -43,23 +44,20 @@ const SpriteThumbnail = memo(({
 const SpriteComponent = memo(({ 
     sprite, 
     message, 
-    onMouseDown, 
     onClick 
 }: { 
     sprite: SpriteType; 
     index: number; 
-    message: string; 
-    onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void; 
+    message: string | null; 
     onClick: () => void;
 }) => (
     <div
-        className="absolute cursor-move transition-all duration-200"
+        className="absolute cursor-pointer transition-all duration-200"
         style={{
             transform: `translate(${sprite.x}px, ${sprite.y}px) rotate(${sprite.rotation}deg)`,
             width: sprite.width,
             height: sprite.height,
         }}
-        onMouseDown={onMouseDown}
         onClick={onClick}
     >
         {sprite.type === 'cat' ? <CatSprite /> : <BallSprite />}
@@ -79,7 +77,6 @@ const SpriteComponent = memo(({
 const PreviewArea: React.FC<PreviewAreaProps> = ({
     sprites,
     onSpriteClick,
-    onMouseDown,
     addSprite,
     activeTab,
     setActiveTab,
@@ -94,10 +91,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
         runAllBlocks();
     };
 
-    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
-        onMouseDown(e, index);
-    };
-
     return (
         <div className="flex flex-col w-full h-full p-2">
             <div
@@ -110,7 +103,6 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                         sprite={sprite}
                         index={index}
                         message={message}
-                        onMouseDown={(e) => handleMouseDown(e, index)}
                         onClick={() => handleSpriteClick(index)}
                     />
                 ))}

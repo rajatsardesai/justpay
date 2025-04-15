@@ -1,5 +1,5 @@
 import './App.css';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import MidArea from './components/MidArea';
 import PreviewArea from './components/PreviewArea';
@@ -21,15 +21,12 @@ const App: React.FC = () => {
     });
     const [hasWhenClickedBlock, setHasWhenClickedBlock] = useState<Record<number, boolean>>({});
 
-    const previewRef = useRef<HTMLDivElement>(null);
-
     const {
         sprites,
         setSprites,
         addSprite,
         isPlaying,
         togglePlay,
-        handleMouseDown,
     } = useSprites();
 
     const { executeBlocksRecursive } = useBlockExecutor(
@@ -67,10 +64,6 @@ const App: React.FC = () => {
         e.dataTransfer.setData("application/json", JSON.stringify(block));
     };
 
-    const handleMouseDownWithRef = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
-        handleMouseDown(e, index, previewRef.current);
-    };
-
     return (
         <div className="bg-blue-100 pt-6 font-sans">
             <ToastContainer position="top-right" autoClose={3000} />
@@ -98,7 +91,6 @@ const App: React.FC = () => {
                         sprites={sprites}
                         isPlaying={isPlaying}
                         onSpriteClick={handleSpriteClick}
-                        onMouseDown={handleMouseDownWithRef}
                         togglePlay={togglePlay}
                         addSprite={addSprite}
                         activeTab={activeTab}

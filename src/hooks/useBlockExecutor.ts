@@ -11,7 +11,7 @@ export const useBlockExecutor = (
     setActiveAction: Dispatch<SetStateAction<Record<number, 'action1' | 'action2'>>>
 ) => {
     const { checkCollisionAndSwap } = useCollisionDetection(sprites, setSprites, setActiveAction);
-    const { updateSpritePosition, updateSpriteRotation } = useSpriteMovement(sprites, setSprites);
+    const { updateSpritePosition, updateSpriteRotation } = useSpriteMovement(setSprites);
 
     const executeBlocksRecursive = async (blocks: BlockType[], spriteIndex: number) => {
         for (let i = 0; i < blocks.length; i++) {

@@ -203,7 +203,6 @@ export const useSprites = () => {
                 const newX = e.clientX - offset.current.x;
                 const newY = e.clientY - offset.current.y;
 
-                // Calculate bounds relative to the preview area
                 const maxX = bounds.width - sprites[idx].width;
                 const maxY = bounds.height - sprites[idx].height;
 
