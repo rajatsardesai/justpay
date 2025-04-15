@@ -1,15 +1,12 @@
-import React from 'react';
-import { useRef } from 'react';
+import React, { useRef, memo } from 'react';
 import CatSprite from './CatSprite';
 import BallSprite from './BallSprite';
 import { SpriteType } from '../hooks/useSprites';
 
 type PreviewAreaProps = {
     sprites: SpriteType[];
-    isPlaying: boolean;
     onSpriteClick: (index: number) => void;
     onMouseDown: (e: React.MouseEvent<HTMLDivElement>, index: number) => void;
-    togglePlay: () => void;
     addSprite: () => void;
     activeTab: number;
     setActiveTab: (index: number) => void;
@@ -17,6 +14,67 @@ type PreviewAreaProps = {
     message: string;
     runAllBlocks: () => void;
 };
+
+const SpriteThumbnail = memo(({ 
+    sprite, 
+    isActive, 
+    activeAction, 
+    onClick 
+}: { 
+    sprite: SpriteType; 
+    index: number; 
+    isActive: boolean; 
+    activeAction: 'action1' | 'action2'; 
+    onClick: () => void;
+}) => (
+    <div 
+        className={`relative cursor-pointer ${isActive ? 'ring-2 ring-blue-500' : ''}`}
+        onClick={onClick}
+    >
+        <div className="transform scale-50">
+            {sprite.type === 'cat' ? <CatSprite /> : <BallSprite />}
+        </div>
+        <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-bl">
+            {activeAction}
+        </div>
+    </div>
+));
+
+const SpriteComponent = memo(({ 
+    sprite, 
+    message, 
+    onMouseDown, 
+    onClick 
+}: { 
+    sprite: SpriteType; 
+    index: number; 
+    message: string; 
+    onMouseDown: (e: React.MouseEvent<HTMLDivElement>) => void; 
+    onClick: () => void;
+}) => (
+    <div
+        className="absolute cursor-move transition-all duration-200"
+        style={{
+            transform: `translate(${sprite.x}px, ${sprite.y}px) rotate(${sprite.rotation}deg)`,
+            width: sprite.width,
+            height: sprite.height,
+        }}
+        onMouseDown={onMouseDown}
+        onClick={onClick}
+    >
+        {sprite.type === 'cat' ? <CatSprite /> : <BallSprite />}
+        {message && (
+            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow text-sm">
+                {message}
+            </div>
+        )}
+        {sprite.currentAnimation && (
+            <div className="absolute top-0 left-0 w-full h-full">
+                {/* Animation overlay */}
+            </div>
+        )}
+    </div>
+));
 
 const PreviewArea: React.FC<PreviewAreaProps> = ({
     sprites,
@@ -31,15 +89,13 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
 }) => {
     const previewRef = useRef<HTMLDivElement>(null);
 
-    const getSpriteComponent = (type: string) => {
-        if (type === 'cat') return <CatSprite />;
-        if (type === 'ball') return <BallSprite />;
-        return null;
-    };
-
     const handleSpriteClick = (index: number) => {
         onSpriteClick(index);
         runAllBlocks();
+    };
+
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, index: number) => {
+        onMouseDown(e, index);
     };
 
     return (
@@ -49,46 +105,27 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
                 className="relative flex-1 overflow-hidden border rounded bg-gray-100"
             >
                 {sprites.map((sprite, index) => (
-                    <div
+                    <SpriteComponent
                         key={index}
-                        className="absolute cursor-move transition-all duration-200"
-                        style={{
-                            transform: `translate(${sprite.x}px, ${sprite.y}px) rotate(${sprite.rotation}deg)`,
-                            width: sprite.width,
-                            height: sprite.height,
-                        }}
-                        onMouseDown={(e) => onMouseDown(e, index)}
+                        sprite={sprite}
+                        index={index}
+                        message={message}
+                        onMouseDown={(e) => handleMouseDown(e, index)}
                         onClick={() => handleSpriteClick(index)}
-                    >
-                        {getSpriteComponent(sprite.type)}
-                        {message && (
-                            <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-white px-2 py-1 rounded shadow text-sm">
-                                {message}
-                            </div>
-                        )}
-                        {sprite.currentAnimation && (
-                            <div className="absolute top-0 left-0 w-full h-full">
-                                {/* Animation overlay */}
-                            </div>
-                        )}
-                    </div>
+                    />
                 ))}
             </div>
 
             <div className="mt-4 flex items-center gap-4 flex-wrap">
                 {sprites.map((sprite, index) => (
-                    <div 
-                        key={`thumb-${index}`} 
-                        className={`relative cursor-pointer ${activeTab === index ? 'ring-2 ring-blue-500' : ''}`}
+                    <SpriteThumbnail
+                        key={`thumb-${index}`}
+                        sprite={sprite}
+                        index={index}
+                        isActive={activeTab === index}
+                        activeAction={activeAction[index]}
                         onClick={() => setActiveTab(index)}
-                    >
-                        <div className="transform scale-50">
-                            {getSpriteComponent(sprite.type)}
-                        </div>
-                        <div className="absolute top-0 right-0 bg-blue-500 text-white text-xs px-2 py-1 rounded-bl">
-                            {activeAction[index]}
-                        </div>
-                    </div>
+                    />
                 ))}
                 <button
                     onClick={addSprite}
@@ -102,4 +139,4 @@ const PreviewArea: React.FC<PreviewAreaProps> = ({
     );
 };
 
-export default PreviewArea;
+export default memo(PreviewArea);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Block, { BlockType } from "./Block";
 import { SpriteType } from "../hooks/useSprites";
+import { useBlockManager } from "../hooks/useBlockManager";
 
 type Props = {
     setEventBlock: React.Dispatch<React.SetStateAction<BlockType | null>>;
@@ -34,6 +35,16 @@ const MidArea: React.FC<Props> = ({
     setBlocks
 }) => {
     const [eventBlock, setLocalEventBlock] = useState<BlockType | null>(null);
+
+    const { handleDrop, handleBlockChange } = useBlockManager(
+        sprites,
+        activeTab,
+        activeAction,
+        sharedActionBlocks,
+        setSharedActionBlocks,
+        setSpriteBlocks,
+        setHasWhenClickedBlock
+    );
 
     useEffect(() => {
         const newActiveAction: Record<number, 'action1' | 'action2'> = {};
@@ -97,92 +108,8 @@ const MidArea: React.FC<Props> = ({
         }
     }, [activeTab, activeAction, sharedActionBlocks, sprites.length]);
 
-    const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        const blockData = e.dataTransfer.getData("application/json");
-        if (!blockData) return;
-
-        const block: BlockType = JSON.parse(blockData);
-        const currentAction = activeAction[activeTab];
-        const currentBlocks = [...sharedActionBlocks[currentAction]];
-
-        if (block.category === "control" && block.action === "repeat") {
-            const dropIndex = currentBlocks.length;
-            
-            const allBlocks = [...currentBlocks];
-            
-            allBlocks.splice(dropIndex, 0, block);
-            
-            const updatedSharedActionBlocks = {
-                ...sharedActionBlocks,
-                [currentAction]: allBlocks
-            };
-            setSharedActionBlocks(updatedSharedActionBlocks);
-            
-            const updatedSpriteBlocks: Record<number, Record<'action1' | 'action2', BlockType[]>> = {};
-            sprites.forEach((_, index) => {
-                updatedSpriteBlocks[index] = {
-                    action1: updatedSharedActionBlocks.action1,
-                    action2: updatedSharedActionBlocks.action2
-                };
-            });
-            setSpriteBlocks(updatedSpriteBlocks);
-            
-            setBlocks?.(allBlocks);
-        } else {
-            const updatedBlocks = [...currentBlocks, block];
-            
-            const updatedSharedActionBlocks = {
-                ...sharedActionBlocks,
-                [currentAction]: updatedBlocks
-            };
-            setSharedActionBlocks(updatedSharedActionBlocks);
-            
-            const updatedSpriteBlocks: Record<number, Record<'action1' | 'action2', BlockType[]>> = {};
-            sprites.forEach((_, index) => {
-                updatedSpriteBlocks[index] = {
-                    action1: updatedSharedActionBlocks.action1,
-                    action2: updatedSharedActionBlocks.action2
-                };
-            });
-            setSpriteBlocks(updatedSpriteBlocks);
-            
-            setBlocks?.(updatedBlocks);
-        }
-        
-        if (block.category === "event" && block.action === "whenClicked") {
-            setHasWhenClickedBlock(prev => ({
-                ...prev,
-                [activeTab]: true
-            }));
-        }
-    };
-
     const allowDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
-    };
-
-    const handleBlockChange = (index: number, updatedBlock: BlockType) => {
-        const currentAction = activeAction[activeTab];
-        const currentBlocks = [...sharedActionBlocks[currentAction]];
-        currentBlocks[index] = updatedBlock;
-        
-        const updatedSharedActionBlocks = {
-            ...sharedActionBlocks,
-            [currentAction]: currentBlocks
-        };
-        setSharedActionBlocks(updatedSharedActionBlocks);
-        
-        const updatedSpriteBlocks: Record<number, Record<'action1' | 'action2', BlockType[]>> = {};
-        sprites.forEach((_, index) => {
-            updatedSpriteBlocks[index] = {
-                action1: updatedSharedActionBlocks.action1,
-                action2: updatedSharedActionBlocks.action2
-            };
-        });
-        setSpriteBlocks(updatedSpriteBlocks);
-        
-        setBlocks?.(currentBlocks);
     };
 
     const handleSetActiveAction = (spriteIndex: number, action: 'action1' | 'action2') => {

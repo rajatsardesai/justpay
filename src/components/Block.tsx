@@ -1,3 +1,5 @@
+import React, { memo } from 'react';
+
 export type MotionBlock =
     | { category: "motion"; action: "move"; label: string; value: number; blocks?: BlockType[] }
     | { category: "motion"; action: "turn"; label: string; value: number; blocks?: BlockType[] }
@@ -30,17 +32,46 @@ type Props = {
     onChange?: (block: BlockType) => void;
 };
 
-const Block: React.FC<Props> = ({ block, onDragStart, onChange }) => {
-    const bg =
-        block.category === "motion"
-            ? "bg-blue-400"
-            : block.category === "looks"
-                ? "bg-purple-400"
-                : block.category === "control"
-                    ? "bg-yellow-400"
-                    : block.category === "event"
-                        ? "bg-orange-400"
-                        : "bg-gray-200";
+const NumberInput = memo(({ 
+    value, 
+    onChange, 
+    minWidth = "4rem" 
+}: { 
+    value: number; 
+    onChange: (value: number) => void; 
+    minWidth?: string;
+}) => (
+    <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(+e.target.value)}
+        className={`mx-1 min-w-[${minWidth}] appearance-none bg-white text-black border border-gray-300 rounded px-1 text-sm transition-all duration-100 focus:outline-none focus:ring-2 focus:ring-blue-300`}
+        style={{ width: `${value.toString().length + 2}ch` }}
+    />
+));
+
+const TextInput = memo(({ 
+    value, 
+    onChange 
+}: { 
+    value: string; 
+    onChange: (value: string) => void;
+}) => (
+    <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mx-1 w-28 appearance-none bg-white text-black border border-gray-300 rounded px-1 text-sm transition-all duration-100 focus:outline-none focus:ring-2 focus:ring-blue-300"
+    />
+));
+
+const Block: React.FC<Props> = memo(({ block, onDragStart, onChange }) => {
+    const bg = {
+        motion: "bg-blue-400",
+        looks: "bg-purple-400",
+        control: "bg-yellow-400",
+        event: "bg-orange-400"
+    }[block.category] || "bg-gray-200";
 
     const handleInput = (key: string, value: any) => {
         if (onChange) {
@@ -48,8 +79,66 @@ const Block: React.FC<Props> = ({ block, onDragStart, onChange }) => {
         }
     };
 
-    const inputBaseStyle =
-        "appearance-none bg-white text-black border border-gray-300 rounded px-1 text-sm transition-all duration-100 focus:outline-none focus:ring-2 focus:ring-blue-300";
+    const renderBlockContent = () => {
+        switch (block.category) {
+            case "motion":
+                switch (block.action) {
+                    case "move":
+                        return (
+                            <>
+                                Move
+                                <NumberInput value={block.value} onChange={(v) => handleInput("value", v)} />
+                                steps
+                            </>
+                        );
+                    case "turn":
+                        return (
+                            <>
+                                Turn
+                                <NumberInput value={block.value} onChange={(v) => handleInput("value", v)} />
+                                degrees
+                            </>
+                        );
+                    case "goto":
+                        return (
+                            <>
+                                Go to x:
+                                <NumberInput value={block.x} onChange={(v) => handleInput("x", v)} minWidth="3.5rem" />
+                                y:
+                                <NumberInput value={block.y} onChange={(v) => handleInput("y", v)} minWidth="3.5rem" />
+                            </>
+                        );
+                }
+                break;
+            case "looks":
+                return (
+                    <>
+                        {block.action === "say" ? "Say" : "Think"}
+                        <TextInput value={block.text} onChange={(v) => handleInput("text", v)} />
+                        for
+                        <NumberInput value={block.duration} onChange={(v) => handleInput("duration", v)} minWidth="3.5rem" />
+                        seconds
+                    </>
+                );
+            case "control":
+                if (block.action === "repeat") {
+                    return (
+                        <>
+                            Repeat
+                            <NumberInput value={block.times} onChange={(v) => handleInput("times", v)} />
+                            times
+                        </>
+                    );
+                }
+                break;
+            case "event":
+                if (block.action === "whenClicked") {
+                    return <strong>When Sprite Clicked</strong>;
+                }
+                break;
+        }
+        return null;
+    };
 
     return (
         <div
@@ -57,99 +146,11 @@ const Block: React.FC<Props> = ({ block, onDragStart, onChange }) => {
             draggable
             onDragStart={(e) => onDragStart(e, block)}
         >
-      <span>
-        {block.category === "motion" && block.action === "move" && (
-            <>
-                Move
-                <input
-                    type="number"
-                    value={block.value}
-                    onChange={(e) => handleInput("value", +e.target.value)}
-                    className={`mx-1 min-w-[4rem] ${inputBaseStyle}`}
-                    style={{ width: `${block.value.toString().length + 2}ch` }}
-                />
-                steps
-            </>
-        )}
-
-          {block.category === "motion" && block.action === "turn" && (
-              <>
-                  Turn
-                  <input
-                      type="number"
-                      value={block.value}
-                      onChange={(e) => handleInput("value", +e.target.value)}
-                      className={`mx-1 min-w-[4rem] ${inputBaseStyle}`}
-                      style={{ width: `${block.value.toString().length + 2}ch` }}
-                  />
-                  degrees
-              </>
-          )}
-
-          {block.category === "motion" && block.action === "goto" && (
-              <>
-                  Go to x:
-                  <input
-                      type="number"
-                      value={block.x}
-                      onChange={(e) => handleInput("x", +e.target.value)}
-                      className={`mx-1 min-w-[3.5rem] ${inputBaseStyle}`}
-                      style={{ width: `${block.x.toString().length + 2}ch` }}
-                  />
-                  y:
-                  <input
-                      type="number"
-                      value={block.y}
-                      onChange={(e) => handleInput("y", +e.target.value)}
-                      className={`mx-1 min-w-[3.5rem] ${inputBaseStyle}`}
-                      style={{ width: `${block.y.toString().length + 2}ch` }}
-                  />
-              </>
-          )}
-
-          {block.category === "looks" && (
-              <>
-                  {block.action === "say" ? "Say" : "Think"}
-                  <input
-                      type="text"
-                      value={block.text}
-                      onChange={(e) => handleInput("text", e.target.value)}
-                      className={`mx-1 w-28 ${inputBaseStyle}`}
-                  />
-                  for
-                  <input
-                      type="number"
-                      value={block.duration}
-                      onChange={(e) => handleInput("duration", +e.target.value)}
-                      className={`mx-1 min-w-[3.5rem] ${inputBaseStyle}`}
-                      style={{ width: `${block.duration.toString().length + 2}ch` }}
-                  />
-                  seconds
-              </>
-          )}
-
-          {block.category === "control" && block.action === "repeat" && (
-              <>
-                  Repeat
-                  <input
-                      type="number"
-                      value={block.times}
-                      onChange={(e) => handleInput("times", +e.target.value)}
-                      className={`mx-1 min-w-[4rem] ${inputBaseStyle}`}
-                      style={{ width: `${block.times.toString().length + 2}ch` }}
-                  />
-                  times
-              </>
-          )}
-
-          {block.category === "event" && block.action === "whenClicked" && (
-              <>
-                  <strong>When Sprite Clicked</strong>
-              </>
-          )}
-      </span>
+            <span>{renderBlockContent()}</span>
         </div>
     );
-};
+});
+
+Block.displayName = 'Block';
 
 export default Block;

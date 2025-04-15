@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { SpriteType } from '../hooks/useSprites';
-import { BlockType } from './Block';
 
 type SpriteTabsProps = {
   sprites: SpriteType[];
   activeTab: number;
-  setActiveTab: (index: number) => void;
   activeAction: Record<number, 'action1' | 'action2'>;
   setActiveAction: (spriteIndex: number, action: 'action1' | 'action2') => void;
-  spriteBlocks: Record<number, Record<'action1' | 'action2', BlockType[]>>;
-  setSpriteBlocks: React.Dispatch<React.SetStateAction<Record<number, Record<'action1' | 'action2', BlockType[]>>>>;
 };
+
+const ActionButton: React.FC<{
+  action: 'action1' | 'action2';
+  isActive: boolean;
+  onClick: () => void;
+}> = ({ action, isActive, onClick }) => (
+  <button
+    className={`px-4 py-2 rounded ${
+      isActive
+        ? 'bg-green-500 text-white'
+        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+    }`}
+    onClick={onClick}
+  >
+    {action === 'action1' ? 'Action 1' : 'Action 2'}
+  </button>
+);
 
 const SpriteTabs: React.FC<SpriteTabsProps> = ({
   sprites,
@@ -18,34 +31,26 @@ const SpriteTabs: React.FC<SpriteTabsProps> = ({
   activeAction,
   setActiveAction,
 }) => {
-  // Check if ball sprite exists
-  const hasBallSprite = sprites.some(sprite => sprite.type === 'ball');
+  const hasBallSprite = useMemo(() => 
+    sprites.some(sprite => sprite.type === 'ball'),
+    [sprites]
+  );
   
   return (
     <div className="mb-4">
       <div className="flex space-x-2">
-        <button
-          className={`px-4 py-2 rounded ${
-            activeAction[activeTab] === 'action1'
-              ? 'bg-green-500 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          }`}
+        <ActionButton
+          action="action1"
+          isActive={activeAction[activeTab] === 'action1'}
           onClick={() => setActiveAction(activeTab, 'action1')}
-        >
-          Action 1
-        </button>
+        />
         
         {hasBallSprite && (
-          <button
-            className={`px-4 py-2 rounded ${
-              activeAction[activeTab] === 'action2'
-                ? 'bg-green-500 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
+          <ActionButton
+            action="action2"
+            isActive={activeAction[activeTab] === 'action2'}
             onClick={() => setActiveAction(activeTab, 'action2')}
-          >
-            Action 2
-          </button>
+          />
         )}
       </div>
     </div>
